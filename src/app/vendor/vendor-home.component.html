@@ -1,0 +1,38 @@
+<mat-toolbar color="primary">
+    <span>Vendors with Async Pipes</span>
+</mat-toolbar>
+<mat-card *ngIf="hideEditForm">
+    <mat-card-header *ngIf="vendor$ | async; else loading">
+        <mat-card-title>
+            <!-- <span class="mat-headline">{{ msg }}</span> -->
+            <div class="logo"><img src="../../assets/img/Monster_Hunter_logo.png" alt="logo"></div>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-list>
+            <app-vendor-list [vendors]="vendor$ | async" (selected)="select($event)">
+            </app-vendor-list>
+        </mat-list>
+        <div class="padtop15">
+            <mat-icon (click)="newVendor()" matTooltip="Add New Vendor" class="addicon" color="primary" >
+            control_point
+            </mat-icon>
+        </div>
+        <div class="my-primary-text main-div">{{ msg }}</div>
+    </mat-card-content>
+</mat-card>
+<mat-card *ngIf="!hideEditForm">
+    <mat-card-header>
+        <mat-card-title>
+            <div class="logo"><img src="../../assets/img/Monster_Hunter_logo.png" alt="logo"></div>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <app-vendor-detail [selectedVendor]="vendor" (cancelled)="cancel('cancelled')" (saved)="save($event)" (deleted)="delete($event)">
+        </app-vendor-detail>
+    </mat-card-content>
+    <span class="my-primary-text">{{ msg }}</span>
+    <ng-template #loading class="my-primary-text">Loading Vendors from server...</ng-template>
+</mat-card>
+
+

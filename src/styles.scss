@@ -1,1 +1,47 @@
-/* You can add global styles to this file, and also import other style files */
+// custom theme
+@import "custom-theme.scss";
+
+.my-primary-text {
+  color: mat-color($my-app-primary);
+}
+
+.my-accent-text {
+  color: mat-color($my-app-accent);
+}
+
+.margin-right-2 {
+  margin-right: 2vw !important;
+}
+
+mat-list-item:nth-child(odd) {
+  background-color: white;
+}
+
+mat-list-item:nth-child(even) {
+  background-color: #eeeeee;
+}
+
+.logo {
+  float: left;
+  height: 150px;
+  width: 100%;
+  margin: auto;
+
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+
+.padtop15 {
+  padding-top: 15%;
+}
+
+.material-icons.addicon {
+  font-size: 10vw;
+  position: absolute;
+  bottom: 4vh;
+  right: 8vw;
+}

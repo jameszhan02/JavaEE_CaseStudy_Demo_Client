@@ -1,0 +1,17 @@
+.logo{
+    float: left;
+    height: 150px;
+    width: 80%;
+    margin: 0 30px 20px 0;
+    
+    &:nth-child(2n) {
+      clear: left;
+    }
+    
+    &:nth-child(2n+1){
+      margin-right: 0;
+    }
+}
+img{
+    object-fit: fill
+}
