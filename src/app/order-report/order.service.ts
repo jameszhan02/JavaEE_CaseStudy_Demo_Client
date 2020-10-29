@@ -8,6 +8,6 @@ import { GenericHttpService } from '../generic-http.service';
 })
 export class OrderService extends GenericHttpService<Order>{
   constructor(public http: HttpClient) {
-    super(http, `${BASEURL}/orders`)
+    super(http, `${BASEURL}/pos`)
   }// constructor
 }

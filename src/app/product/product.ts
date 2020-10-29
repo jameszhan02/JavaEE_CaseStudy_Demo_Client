@@ -8,7 +8,7 @@ export interface Product {
     eoq: number;
     qoh: number;
     qoo: number;
-    qrcode: number;
+    qrcode: string;
     qrcodetxt: string;
     qtyNum: number;
 }
