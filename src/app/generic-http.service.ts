@@ -21,4 +21,7 @@ export class GenericHttpService<T> {
   public delete(id: number): Observable<number> {
     return this.httpClient.delete<number>(`${this.url}/${id}`);
   } // delete
+  public deleteStrId (strId : string) : Observable<number>{
+    return this.httpClient.delete<number>(`${this.url}/${strId}`);
+  }
 } // GenericHttpService

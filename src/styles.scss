@@ -45,3 +45,30 @@ img {
   bottom: 4vh;
   right: 8vw;
 }
+
+
+table {
+  width: 100%;
+ }
+ .center-header{
+  flex-direction: column;
+  justify-content: center;
+  font-weight: bolder;
+  margin-left:25px;
+ }
+ .mat-cell {
+  text-align: center;
+  justify-content:center;
+ }
+ .mat-row:nth-child(odd){
+  background-color:#eeeeee;
+  text-align: center;
+ }
+ .mat-row.ng-star-inserted:nth-child(even) {
+  background-color: white;
+  text-align: center;
+ }
+ button.mat-sort-header-button {
+  margin-left: 5vw;
+ }
+ 
