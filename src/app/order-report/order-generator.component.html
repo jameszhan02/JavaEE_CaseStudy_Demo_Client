@@ -77,6 +77,10 @@
             <div style="text-align:center;" *ngIf="hasProducts">
                 <button mat-raised-button color="primary" (click)="createReport()">Save Report</button>
             </div>
+            <div style="text-align:center;" *ngIf="generated">
+                <button mat-raised-button type="submit" (click)="viewPdf()">View PDF</button>
+            </div>
+
         </form>
     </mat-card-content>
 </mat-card>

@@ -6,7 +6,7 @@ import { Vendor } from '../vendor/vendor';
 import { Product } from '../product/product';
 import { OrderItem } from './order-item';
 import { Order } from './order';
-import { BASEURL } from '../constants';
+import { BASEURL, PDFURL } from '../constants';
 import { VendorService } from '../vendor/vendor.service';
 import { ProductService } from '../product/product.service';
 import { OrderService } from './order.service';
@@ -36,9 +36,11 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
   pickedVendor: boolean;
   generated: boolean;
   hasProducts: boolean;
+  pono: number;
   msg: string;
   total: number;
   tax: number;
+  amount: number;
   finalTotal: number;
   url: string;
   constructor(private builder: FormBuilder,
@@ -110,6 +112,10 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
     });
   } // onPickEmployee
 
+  viewPdf(): void {
+    window.open(PDFURL + this.pono, '');
+    } // viewPdf
+   
   //can not call
   onPickQty(): void{
     // const xSubscr = this.generatorForm.get('qty').valueChanges.subscribe(val => {
@@ -122,7 +128,6 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
         SelectedQty = this.selectedproduct[qtyTxt];
         item.qty = SelectedQty;
         item.price = SelectedQty * this.selectedproduct.costprice;
-        this.items.push(item);
         // this.selectedproduct['qtyNum'] = SelectedQty;
         this.selectedproducts.push(this.selectedproduct);
         // this.selectedproductsQty.push(SelectedQty);
@@ -134,6 +139,7 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
       this.items.forEach(orderItem => this.total += orderItem.price);
       this.tax = this.total * 0.15;
       this.finalTotal = this.tax + this.total;
+      this.items.push(item);
     // })
     // this.subscription.add(xSubscr);
     // this.subscription.add(xSubscr); // add it as a child, so all can be destroyed together
@@ -179,7 +185,7 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
   */
   createReport(): void {
     this.generated = false;
-    const report: Order = { id: 0, items: this.items, vendorid: this.selectedproduct.vendorid, amount: 0, podate:''};
+    const report: Order = { id: 0, items: this.items, vendorid: this.selectedproduct.vendorid, amount: this.total, podate:''};
     const rSubscr = this.orderService.add(report).subscribe(
       payload => { // server should be returning new id
         typeof payload === 'number'
@@ -188,6 +194,14 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
         this.hasProducts = false;
         this.pickedVendor = false;
         this.pickedProduct = false;
+        if (typeof payload === 'number') {
+          this.msg = `Report ${payload} added!`;
+          this.pono = payload;
+          this.generated = true;
+          } else {
+          this.msg = 'Report not added! - server error';
+          }
+         
       },
       err => {
         this.msg = `Error - expense not added - ${err.status} - ${err.statusText}`;
