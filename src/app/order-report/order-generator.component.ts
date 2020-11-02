@@ -30,9 +30,9 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
   selectedproducts: Product[]; // products that being displayed currently in app
   selectedproduct: Product; // the current selected product
   selectedVendor: Vendor; // the current selected employee
-  selectedQty:string;
+  selectedQty: string;
   pickedProduct: boolean;
-  pickedQty:boolean;
+  pickedQty: boolean;
   pickedVendor: boolean;
   generated: boolean;
   hasProducts: boolean;
@@ -50,7 +50,7 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
     this.pickedVendor = false;
     this.pickedProduct = false;
     this.generated = false;
-    this.pickedQty =false;
+    this.pickedQty = false;
     this.total = 0.0;
     this.url = BASEURL + 'orders';
   } // constructor
@@ -114,32 +114,33 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
 
   viewPdf(): void {
     window.open(PDFURL + this.pono, '');
-    } // viewPdf
-   
+  } // viewPdf
+
   //can not call
-  onPickQty(): void{
+  onPickQty(): void {
     // const xSubscr = this.generatorForm.get('qty').valueChanges.subscribe(val => {
-      console.log("iam in qty");
-      let qtyTxt = this.generatorForm.get('qty').value;
+    console.log("iam in qty");
+    let qtyTxt = this.generatorForm.get('qty').value;
+    const item: OrderItem = { id: 0, poid: 0, productid: this.selectedproduct.id, qty: 0, price: 0 };
+    if (this.items.find(it => it.productid === this.selectedproduct.id)) { // ignore entry
+    } else { // add entry
       let SelectedQty = 0;
-      const item: OrderItem = { id: 0, poid: 0, productid: this.selectedproduct.id, qty: 0, price: 0  };
-      if (this.items.find(it => it.productid === this.selectedproduct.id)) { // ignore entry
-      } else { // add entry
-        SelectedQty = this.selectedproduct[qtyTxt];
-        item.qty = SelectedQty;
-        item.price = SelectedQty * this.selectedproduct.costprice;
-        // this.selectedproduct['qtyNum'] = SelectedQty;
-        this.selectedproducts.push(this.selectedproduct);
-        // this.selectedproductsQty.push(SelectedQty);
-      }
-      if (this.items.length > 0) {
-        this.hasProducts = true;
-      }
+      SelectedQty = this.selectedproduct[qtyTxt];
+      item.qty = SelectedQty;
+      item.price = SelectedQty * this.selectedproduct.costprice;
+      // this.selectedproduct['qtyNum'] = SelectedQty;
+      this.selectedproducts.push(this.selectedproduct);
+      // this.selectedproductsQty.push(SelectedQty);
       this.total = 0.0;
+      this.items.push(item);
       this.items.forEach(orderItem => this.total += orderItem.price);
+      console.log(this.total);
       this.tax = this.total * 0.15;
       this.finalTotal = this.tax + this.total;
-      this.items.push(item);
+    }
+    if (this.items.length > 0) {
+      this.hasProducts = true;
+    }
     // })
     // this.subscription.add(xSubscr);
     // this.subscription.add(xSubscr); // add it as a child, so all can be destroyed together
@@ -185,7 +186,7 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
   */
   createReport(): void {
     this.generated = false;
-    const report: Order = { id: 0, items: this.items, vendorid: this.selectedproduct.vendorid, amount: this.total, podate:''};
+    const report: Order = { id: 0, items: this.items, vendorid: this.selectedproduct.vendorid, amount: this.total, podate: '' };
     const rSubscr = this.orderService.add(report).subscribe(
       payload => { // server should be returning new id
         typeof payload === 'number'
@@ -198,10 +199,10 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
           this.msg = `Report ${payload} added!`;
           this.pono = payload;
           this.generated = true;
-          } else {
+        } else {
           this.msg = 'Report not added! - server error';
-          }
-         
+        }
+
       },
       err => {
         this.msg = `Error - expense not added - ${err.status} - ${err.statusText}`;
