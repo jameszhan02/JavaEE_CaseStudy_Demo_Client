@@ -23,6 +23,7 @@ export class ProductDetailComponent implements OnInit {
   @Output() deleted = new EventEmitter();
   productForm: FormGroup;
   inventoryForm: FormGroup;
+  qrCodeForm: FormGroup;
   id: FormControl;
   vendorid: FormControl;
   name: FormControl;
@@ -32,6 +33,7 @@ export class ProductDetailComponent implements OnInit {
   eoq: FormControl;
   qoh: FormControl;
   qoo: FormControl;
+  qrTxt: FormControl;
   // method helper
   uniqueCodeValidator = (control) => {
     /**
@@ -52,10 +54,14 @@ export class ProductDetailComponent implements OnInit {
     this.eoq = new FormControl('', Validators.compose([Validators.required, ValidateInt]));
     this.qoh = new FormControl('', Validators.compose([Validators.required, ValidateInt]));
     this.qoo = new FormControl('', Validators.compose([Validators.required, ValidateInt]));
+    this.qrTxt = new FormControl('', Validators.compose([Validators.required]));
   } // constructor
   ngOnInit(): void {
     console.log(this.vendors);
     console.log(this.selectedProduct);
+    this.qrCodeForm = this.builder.group({
+      qrTxt: this.qrTxt
+    });
     this.inventoryForm = this.builder.group({
       rop: this.rop,
       eoq: this.eoq,
@@ -83,6 +89,9 @@ export class ProductDetailComponent implements OnInit {
       qoh: this.selectedProduct.qoh,
       qoo: this.selectedProduct.qoo
     });
+    this.qrCodeForm.patchValue({
+      qrTxt: this.selectedProduct.qrcodetxt
+    });
   } // ngOnInit
   updateSelectedProduct(): void {
     this.selectedProduct.id = this.productForm.get('id').value;
@@ -94,6 +103,7 @@ export class ProductDetailComponent implements OnInit {
     this.selectedProduct.eoq = this.inventoryForm.get('eoq').value;
     this.selectedProduct.qoh = this.inventoryForm.get('qoh').value;
     this.selectedProduct.qoo = this.inventoryForm.get('qoo').value;
+    this.selectedProduct.qrcodetxt = this.qrCodeForm.get('qrTxt').value;
     this.saved.emit(this.selectedProduct);
   }
 } // ExpenseDetailComponent

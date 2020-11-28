@@ -7,6 +7,7 @@ import { VendorService } from '../vendor/vendor.service';
 import { ProductService } from './product.service';
 import { Observable, of } from 'rxjs';
 import { catchError, share } from 'rxjs/operators';
+import {MatPaginator} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-product-home',
@@ -16,6 +17,7 @@ import { catchError, share } from 'rxjs/operators';
 })
 
 export class ProductHomeComponent implements OnInit {
+  size: number;
   Vendors$: Observable<Vendor[]>;
   products: Product[];
   products$: Observable<Product[]>;
@@ -26,6 +28,7 @@ export class ProductHomeComponent implements OnInit {
   url: string;
   displayedColumns: string[] = ['id', 'name', 'vendorid'];
   dataSource: MatTableDataSource<Product>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   constructor(private vendorService: VendorService, private productService: ProductService) {
     this.hideEditForm = true;
@@ -152,8 +155,10 @@ export class ProductHomeComponent implements OnInit {
   */
   refreshDS(): void {
     this.products$.subscribe(products => {
+      this.size = products.length;
       this.dataSource = new MatTableDataSource(products);
       this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
     });
   } // refresh
 } // ExpenseHomeComponent

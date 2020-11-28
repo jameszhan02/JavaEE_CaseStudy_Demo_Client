@@ -125,6 +125,31 @@
 
     </form>
 </mat-expansion-panel>
+
+<!-- QR Code Panel -->
+<br />
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            QRCode Information
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <form [formGroup]="qrCodeForm" novalidate>
+        <div layout="row">
+            <mat-form-field flex>
+                <input matInput placeholder="QRCode Text" type="text" formControlName="qrTxt">
+                <mat-error align="end">
+                    <span *ngIf="qrTxt.hasError('required')">ROP Price is required</span>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <br />
+        <div>QR CODE: </div>
+        <img style="display:block;" [src]="'data:image/png;base64,' + selectedProduct.qrcode"/>
+        <br />
+    </form>
+</mat-expansion-panel>
 <!-- </mat-accordion> -->
 <br />
 <div class="mat-pad-sm">
