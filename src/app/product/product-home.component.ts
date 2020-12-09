@@ -125,7 +125,7 @@ export class ProductHomeComponent implements OnInit {
   newProduct(): void {
     this.selectedProduct = {
       id: null, vendorid: null, name: '',
-      costprice: null, msrp: null, rop: null, eoq: null, qoh: null, qoo: null, qrcode: null, qrcodetxt: "", qtyNum: null
+      costprice: null, msrp: null, rop: null, eoq: null, qoh: null, qoo: null, qrcode: null, qrcodetxt: "", qtyNum: null, subSum: null
     };
     this.msg = 'New product';
     this.hideEditForm = !this.hideEditForm;

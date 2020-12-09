@@ -2,13 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GenericHttpService<T> {
-  constructor(
-    private httpClient: HttpClient,
-    private url: string,
-  ) { }
+  constructor(private httpClient: HttpClient, private url: string) {}
   public add(item: T): Observable<T> {
     return this.httpClient.post<T>(`${this.url}`, item);
   } // add
@@ -21,7 +18,10 @@ export class GenericHttpService<T> {
   public delete(id: number): Observable<number> {
     return this.httpClient.delete<number>(`${this.url}/${id}`);
   } // delete
-  public deleteStrId (strId : string) : Observable<number>{
+  public deleteStrId(strId: string): Observable<number> {
     return this.httpClient.delete<number>(`${this.url}/${strId}`);
   }
+  public getById(id: number): Observable<T[]> {
+    return this.httpClient.get<T[]>(`${this.url}/${id}`);
+  } // getById
 } // GenericHttpService

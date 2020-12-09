@@ -2,32 +2,35 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { Observable, of, Subscription } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Vendor } from '../vendor/vendor';
-import { Product } from '../product/product';
-import { OrderItem } from './order-item';
-import { Order } from './order';
-import { BASEURL, PDFURL } from '../constants';
-import { VendorService } from '../vendor/vendor.service';
-import { ProductService } from '../product/product.service';
-import { OrderService } from './order.service';
+import { Vendor } from '../../vendor/vendor';
+import { Product } from '../../product/product';
+import { OrderItem } from '../order-item';
+import { Order } from '../order';
+import { BASEURL, PDFURL } from '../../constants';
+import { VendorService } from '../../vendor/vendor.service';
+import { ProductService } from '../../product/product.service';
+import { OrderService } from '../order.service';
 @Component({
-  selector: 'app-order-generator',
-  templateUrl: './order-generator.component.html',
+  selector: 'app-order-viewer',
+  templateUrl: './order-viewer.component.html',
   styles: [
   ]
 })
-export class OrderGeneratorComponent implements OnInit, OnDestroy {
+export class OrderViewerComponent implements OnInit, OnDestroy {
   // form
   generatorForm: FormGroup;
   vendorid: FormControl;
+  poReport: FormControl;
   productid: FormControl;
   qty: FormControl;
   subscription: Subscription;
   products$: Observable<Product[]>; // everybody's products
   vendors$: Observable<Vendor[]>; // all vendors
+  poReports$: Observable<Order[]>;
+  selectedReport: Order;
   vendorproducts$: Observable<Product[]>; // all products for a particular vendor
   items: Array<OrderItem>; // product items that will be in report
-  selectedproducts: Product[]; // products that being displayed currently in app
+  selectedproducts: Array<Product>; // products that being displayed currently in app
   selectedproduct: Product; // the current selected product
   selectedVendor: Vendor; // the current selected employee
   selectedQty: string;
@@ -36,6 +39,7 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
   pickedVendor: boolean;
   generated: boolean;
   hasProducts: boolean;
+  hasReport: boolean;
   pono: number;
   msg: string;
   total: number;
@@ -58,14 +62,16 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
     this.msg = '';
     this.vendorid = new FormControl('');
     this.productid = new FormControl('');
+    this.poReport = new FormControl('');
     this.qty = new FormControl('');
     this.generatorForm = this.builder.group({
       productid: this.productid,
       vendorid: this.vendorid,
+      poReport: this.poReport,
       qty: this.qty
     });
     this.onPickVendor();
-    this.onPickProduct();
+    this.onPickPoReport();
     this.msg = 'loading Vendors and product from server...';
     this.vendors$ = this.vendorService.getAll().pipe(
       catchError(error => {
@@ -96,14 +102,31 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
   * onPickVendor - Another way to use Observables, subscribe to the select change event
   * then load specific vendor products for subsequent selection
   */
+//  onPickPoReport(): void{
+  
+//  }
+
   onPickVendor(): void {
     this.subscription = this.generatorForm.get('vendorid').valueChanges.subscribe(val => {
+      // console.log(val);
+      
       this.selectedproduct = null;
       this.selectedVendor = val;
       this.selectedQty = null;
+      this.poReports$ = this.orderService.getById(val.id).pipe(
+        catchError(error => {
+          if (error.error instanceof ErrorEvent) {
+            this.msg = `Error: ${error.error.message}`;
+          } else {
+            this.msg = `Error: ${error.message}`;
+          }
+          return of([]); // returns an empty array if there's a problem
+        })
+      );
       this.loadVendorProducts();
       this.pickedProduct = false;
       this.hasProducts = false;
+      this.hasReport = false;
       this.msg = 'choose product for the vendor';
       this.pickedVendor = true;
       this.generated = false;
@@ -113,7 +136,7 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
   } // onPickEmployee
 
   viewPdf(): void {
-    window.open(PDFURL + this.pono, '');
+    window.open(PDFURL + this.selectedReport.id, '');
   } // viewPdf
 
   //can not call
@@ -145,10 +168,27 @@ export class OrderGeneratorComponent implements OnInit, OnDestroy {
     // this.subscription.add(xSubscr);
     // this.subscription.add(xSubscr); // add it as a child, so all can be destroyed together
   }//end of onpickqty
-  onPickProduct(): void {
-    const xSubscr = this.generatorForm.get('productid').valueChanges.subscribe(val => {
+  onPickPoReport(): void {
+    const xSubscr = this.generatorForm.get('poReport').valueChanges.subscribe(val => {
       console.log("iam in");
-      this.selectedproduct = val;
+      this.selectedReport = val;
+      this.total = this.selectedReport.amount;
+      this.tax = this.total * 0.13;
+      this.finalTotal = this.tax + this.total;
+      // this.hasReport = true;
+      this.selectedReport.items.map(item => {
+        this.products$
+        .pipe(map(products => products
+        .find(product => product.id === item.productid)))
+        .subscribe(exp => {
+        exp.qtyNum = item.qty;
+        exp.subSum = exp.qtyNum * exp.costprice;
+        this.selectedproducts.push(exp);
+        
+        console.log(this.selectedproducts);
+        });
+        this.hasReport = true;
+        });
       this.pickedProduct = true;
       this.generatorForm.get('qty').setValue("");
       // console.log("iam in qty");

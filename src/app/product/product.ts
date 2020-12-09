@@ -11,4 +11,5 @@ export interface Product {
     qrcode: string;
     qrcodetxt: string;
     qtyNum: number;
+    subSum: number;
 }
